@@ -3,7 +3,9 @@
   <van-nav-bar
     title="登录"
     class="page-nav-bar"
-  />
+  >
+    <van-icon slot="left" name="cross" @click="$router.back()"/>
+  </van-nav-bar>
   <van-form @submit="onSubmit" ref="loginForm">
     <van-field
       v-model="user.mobile"
