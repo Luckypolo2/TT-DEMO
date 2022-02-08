@@ -7,6 +7,8 @@ import '@/style/index.less'
 
 import 'amfe-flexible'
 
+import './utils/dayjs'
+
 import Vant from 'vant'
 import 'vant/lib/index.less'
 
