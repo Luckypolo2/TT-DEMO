@@ -12,8 +12,7 @@
         <van-image slot="icon" round fit="cover" class="avatar" :src="article.aut_photo" ></van-image>
         <div class="username" slot="title">{{ article.aut_name }}</div>
         <div class="pub-time" slot="label">{{ article.pubdate | relativeTime }}</div>
-        <van-button v-if="article.is_followed" class="user-btn" slot="default" round type="info" @click="onFollow">已关注</van-button>
-        <van-button v-else class="user-btn" slot="default" round type="info" icon="plus" @click="onFollow">关注</van-button>
+        <follow-user :is-followed="article.is_followed" :user-id="article.aut_id" @update-is_followed="article.is_followed = $event"></follow-user>
       </van-cell>
 <!--      文章内容页-->
       <div class="article-content markdown-body" v-html="article.content"></div>
@@ -63,10 +62,13 @@
 
 <script>
 import { getArticleById } from '@/api/article'
-import { addFollow, deleteFollow } from '@/api/user'
+import FollowUser from '@/components/follow-user'
 
 export default {
   name: 'Article',
+  components: {
+    FollowUser
+  },
   data () {
     return {
       article: {},
@@ -100,23 +102,25 @@ export default {
         }
       }
       this.loading = false
-    },
-    async onFollow () {
-      try {
-        if (this.article.is_followed) {
-          await deleteFollow(this.article.aut_id)
-        } else {
-          await addFollow(this.article.aut_id)
-        }
-        this.article.is_followed = !this.article.is_followed
-      } catch (err) {
-        let message = '出错，重试'
-        if (err.response && err.response.status === 400) {
-          message = '无法关注自己'
-        }
-        this.$toast(message)
-      }
     }
+    // async onFollow () {
+    //   try {
+    //     this.followLoading = true
+    //     if (this.article.is_followed) {
+    //       await deleteFollow(this.article.aut_id)
+    //     } else {
+    //       await addFollow(this.article.aut_id)
+    //     }
+    //     this.article.is_followed = !this.article.is_followed
+    //   } catch (err) {
+    //     let message = '出错，重试'
+    //     if (err.response && err.response.status === 400) {
+    //       message = '无法关注自己'
+    //     }
+    //     this.$toast(message)
+    //   }
+    //   this.followLoading = false
+    // }
   }
 }
 </script>
