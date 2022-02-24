@@ -11,7 +11,7 @@
       <div class="user-name">{{ comment.aut_name }}</div>
       <van-button
         class="like-btn"
-        :icon="comment.is_liking?'good-job':'good-job-o'"
+        :icon="comment.is_liking?'good-job':'good-job-o'" @click="onCommentLike" :loading="commentLoading"
       >{{ comment.like_count>0 ? comment.like_count:'赞' }}</van-button>
     </div>
 
@@ -29,23 +29,44 @@
 </template>
 
 <script>
+import { addCommentLike, deleteCommentLike } from '@/api/comment'
+
 export default {
   name: 'CommentItem',
   components: {},
   props: {
     comment: {
-      type: Array,
+      type: Object,
       required: true
     }
   },
   data () {
-    return {}
+    return {
+      commentLoading: false
+    }
   },
   computed: {},
   watch: {},
   created () {},
   mounted () {},
-  methods: {}
+  methods: {
+    async onCommentLike () {
+      this.commentLoading = true
+      try {
+        if (this.comment.is_liking) {
+          await deleteCommentLike(this.comment.com_id)
+          this.comment.like_count--
+        } else {
+          await addCommentLike(this.comment.com_id)
+          this.comment.like_count++
+        }
+      } catch (err) {
+        this.$toast.fail('请求失败')
+      }
+      this.comment.is_liking = !this.comment.is_liking
+      this.commentLoading = false
+    }
+  }
 }
 </script>
 

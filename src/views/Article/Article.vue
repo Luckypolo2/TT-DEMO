@@ -17,10 +17,10 @@
 <!--      文章内容页-->
       <div class="article-content markdown-body" v-html="article.content"></div>
       <van-divider>正文结束</van-divider>
-      <comment-list :source="article.art_id" @onload-success="totalCommentCount = $event.total_count"></comment-list>
+      <comment-list :source="article.art_id" @onload-success="totalCommentCount = $event.total_count" :list="commentList"></comment-list>
       <!-- 底部区域 -->
       <div class="article-bottom">
-        <van-button class="comment-btn" type="default" round size="small">写评论</van-button>
+        <van-button class="comment-btn" type="default" round size="small" @click="isPostShow = true">写评论</van-button>
         <van-icon name="comment-o" :info="totalCommentCount" color="#777"/>
 <!--        收藏按钮-->
         <collect-article v-model="article.is_collected" :article-id="article.art_id"></collect-article>
@@ -28,6 +28,10 @@
 <!--        <van-icon name="share" color="#777777"></van-icon>-->
       </div>
       <!-- /底部区域 -->
+<!--      评论弹出层-->
+      <van-popup v-model="isPostShow" position="bottom">
+        <comment-post :target="article.art_id" @post-success="onPostSuccess"></comment-post>
+      </van-popup>
     </div>
     <!-- 加载失败：404 -->
     <div v-else-if="errStatus === 404" class="error-wrap">
@@ -54,6 +58,7 @@ import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
 import CommentList from '@/components/comment-list'
+import CommentPost from '@/components/comment-post'
 
 export default {
   name: 'Article',
@@ -61,14 +66,17 @@ export default {
     FollowUser,
     CollectArticle,
     LikeArticle,
-    CommentList
+    CommentList,
+    CommentPost
   },
   data () {
     return {
       article: {},
       loading: false,
       errStatus: 0,
-      totalCommentCount: 0
+      totalCommentCount: 0,
+      isPostShow: false,
+      commentList: []
     }
   },
   props: {
@@ -97,6 +105,10 @@ export default {
         }
       }
       this.loading = false
+    },
+    onPostSuccess (data) {
+      this.isPostShow = false
+      this.commentList.unshift(data.new_obj)
     }
     // async onFollow () {
     //   try {

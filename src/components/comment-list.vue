@@ -1,7 +1,7 @@
 <template>
 <van-list v-model="loading" :finished="finished"
 finished-text="没有更多了" @load="onLoad">
-  <comment-item v-for="(item, index) in list[0]" :key="index" :comment="item"></comment-item>
+  <comment-item v-for="(item, index) in list" :key="index" :comment="item"></comment-item>
 </van-list>
 </template>
 
@@ -14,7 +14,7 @@ export default {
   components: { CommentItem },
   data () {
     return {
-      list: [],
+      // list: [],
       loading: false,
       finished: false,
       offset: null,
@@ -25,6 +25,10 @@ export default {
     source: {
       type: [String, Number, Object],
       required: true
+    },
+    list: {
+      type: Array,
+      default: () => []
     }
   },
   methods: {
@@ -38,7 +42,7 @@ export default {
         })
         console.log(res)
         const { results } = res.data
-        this.list.push(results)
+        this.list.push(...results)
         this.$emit('onload-success', res.data)
         this.loading = false
         if (results.length) {
