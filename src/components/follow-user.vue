@@ -1,6 +1,6 @@
 <template>
-  <van-button v-if="isFollowed" class="user-btn" slot="default" round type="info" @click="onFollow" :loading="followLoading">已关注</van-button>
-  <van-button v-else class="user-btn" slot="default" round type="info" icon="plus" @click="onFollow" :loading="followLoading">关注</van-button>
+  <van-button v-if="isFollowed" slot="default" round type="info" @click="onFollow" :loading="followLoading">已关注</van-button>
+  <van-button v-else slot="default" round type="info" icon="plus" @click="onFollow" :loading="followLoading">关注</van-button>
 </template>
 
 <script>
@@ -8,6 +8,10 @@ import { addFollow, deleteFollow } from '@/api/user'
 
 export default {
   name: 'FollowUser',
+  model: {
+    prop: 'isFollowed',
+    event: 'update-is_followed'
+  },
   data () {
     return {
       followLoading: false

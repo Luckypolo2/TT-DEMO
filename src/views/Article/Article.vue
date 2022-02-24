@@ -12,11 +12,22 @@
         <van-image slot="icon" round fit="cover" class="avatar" :src="article.aut_photo" ></van-image>
         <div class="username" slot="title">{{ article.aut_name }}</div>
         <div class="pub-time" slot="label">{{ article.pubdate | relativeTime }}</div>
-        <follow-user :is-followed="article.is_followed" :user-id="article.aut_id" @update-is_followed="article.is_followed = $event"></follow-user>
+        <follow-user v-model="article.is_followed" :user-id="article.aut_id" class="user-btn"></follow-user>
       </van-cell>
 <!--      文章内容页-->
       <div class="article-content markdown-body" v-html="article.content"></div>
       <van-divider>正文结束</van-divider>
+      <comment-list :source="article.art_id" @onload-success="totalCommentCount = $event.total_count"></comment-list>
+      <!-- 底部区域 -->
+      <div class="article-bottom">
+        <van-button class="comment-btn" type="default" round size="small">写评论</van-button>
+        <van-icon name="comment-o" :info="totalCommentCount" color="#777"/>
+<!--        收藏按钮-->
+        <collect-article v-model="article.is_collected" :article-id="article.art_id"></collect-article>
+        <like-article v-model="article.attitude" :article-id="article.art_id"></like-article>
+<!--        <van-icon name="share" color="#777777"></van-icon>-->
+      </div>
+      <!-- /底部区域 -->
     </div>
     <!-- 加载失败：404 -->
     <div v-else-if="errStatus === 404" class="error-wrap">
@@ -33,47 +44,31 @@
     </div>
     <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
   </div>
-  <!-- 底部区域 -->
-  <div class="article-bottom">
-    <van-button
-      class="comment-btn"
-      type="default"
-      round
-      size="small"
-    >写评论</van-button>
-    <van-icon
-      name="comment-o"
-      info="123"
-      color="#777"
-    />
-    <van-icon
-      color="#777"
-      name="star-o"
-    />
-    <van-icon
-      color="#777"
-      name="good-job-o"
-    />
-    <van-icon name="share" color="#777777"></van-icon>
-  </div>
-  <!-- /底部区域 -->
+
 </div>
 </template>
 
 <script>
 import { getArticleById } from '@/api/article'
 import FollowUser from '@/components/follow-user'
+import CollectArticle from '@/components/collect-article'
+import LikeArticle from '@/components/like-article'
+import CommentList from '@/components/comment-list'
 
 export default {
   name: 'Article',
   components: {
-    FollowUser
+    FollowUser,
+    CollectArticle,
+    LikeArticle,
+    CommentList
   },
   data () {
     return {
       article: {},
       loading: false,
-      errStatus: 0
+      errStatus: 0,
+      totalCommentCount: 0
     }
   },
   props: {
@@ -206,12 +201,15 @@ export default {
       line-height: 46px;
       color: #a7a7a7;
     }
-    .van-icon {
+    /deep/.van-icon {
       font-size: 40px;
       .van-info {
         font-size: 16px;
         background-color: #e22829;
       }
+    }
+    /deep/.van-button--default{
+      border: 0.02667rem solid white;
     }
   }
 }
