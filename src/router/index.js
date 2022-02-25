@@ -8,6 +8,7 @@ import Video from '@/views/Video/Video'
 import My from '@/views/My/My'
 import Search from '@/views/Search/Search'
 import Article from '@/views/Article/Article'
+import UserProfile from '@/views/My/user-profile'
 
 Vue.use(VueRouter)
 
@@ -25,7 +26,8 @@ const routes = [
     ]
   },
   { path: '/search', component: Search, name: 'search' },
-  { path: '/article/:articleID', component: Article, name: 'article', props: true }
+  { path: '/article/:articleID', component: Article, name: 'article', props: true },
+  { path: '/user/profile', component: UserProfile, name: 'userProfile' }
 ]
 
 const router = new VueRouter({
